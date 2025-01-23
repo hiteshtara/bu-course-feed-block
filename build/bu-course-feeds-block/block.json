@@ -12,6 +12,10 @@
       "type": "string",
       "default": ""
     },
+    "course": {
+      "type": "string",
+      "default": ""
+    },
     "department": {
       "type": "string",
       "default": ""

@@ -32,9 +32,49 @@ function Edit({
     college,
     department
   } = attributes;
+
+  // Mock courses data
+  const mockCourses = [{
+    course_id: 'CS101',
+    title: 'Introduction to Programming',
+    college: 'ENG',
+    department: 'CS'
+  }, {
+    course_id: 'CS102',
+    title: 'Advanced Algorithms',
+    college: 'ENG',
+    department: 'CS'
+  }, {
+    course_id: 'EE201',
+    title: 'Circuit Analysis',
+    college: 'ENG',
+    department: 'EE'
+  }, {
+    course_id: 'MATH201',
+    title: 'Linear Algebra',
+    college: 'SCI',
+    department: 'MATH'
+  }, {
+    course_id: 'PHYS301',
+    title: 'Physics I',
+    college: 'SCI',
+    department: 'PHYS'
+  }, {
+    course_id: 'PSY101',
+    title: 'Introduction to Psychology',
+    college: 'ARTS',
+    department: 'PSY'
+  }, {
+    course_id: 'HIST501',
+    title: 'World History',
+    college: 'ARTS',
+    department: 'HIST'
+  }];
   const [courses, setCourses] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [loading, setLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+
+  // Fetch courses based on selected college and department
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (!college && !department) {
       setError('Please specify a college or department.');
@@ -43,20 +83,23 @@ function Edit({
     }
     setLoading(true);
     setError(null);
-    wp.apiFetch({
-      path: `/wp-json/bu-course-feeds/v1/courses?college=${college}&department=${department}`
-    }).then(data => {
-      if (data && data.length) {
-        setCourses(data);
+
+    // Simulate an API call with a delay using mock data
+    setTimeout(() => {
+      const filteredCourses = mockCourses.filter(course => {
+        const matchesCollege = college ? course.college === college : true;
+        const matchesDepartment = department ? course.department === department : true;
+        return matchesCollege && matchesDepartment;
+      });
+      if (filteredCourses.length > 0) {
+        setCourses(filteredCourses);
+        setError(null);
       } else {
         setCourses([]);
         setError('No courses found for the specified filters.');
       }
       setLoading(false);
-    }).catch(() => {
-      setError('Failed to retrieve course data. Please try again later.');
-      setLoading(false);
-    });
+    }, 500); // Simulating network delay
   }, [college, department]);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
     ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(),
@@ -65,14 +108,14 @@ function Edit({
         title: "Course Feed Settings",
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
           label: "College",
-          value: college,
+          value: college || '',
           onChange: value => setAttributes({
             college: value
           }),
           placeholder: "Enter college code (e.g., ENG)"
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
           label: "Department",
-          value: department,
+          value: department || '',
           onChange: value => setAttributes({
             department: value
           }),

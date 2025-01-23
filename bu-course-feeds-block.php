@@ -25,46 +25,29 @@ add_action('rest_api_init', function () {
 		'permission_callback' => '__return_true', // Allow public access
 	]);
 });
-function bu_course_feeds_get_courses($request)
+function bu_course_feeds_get_courses($filters)
 {
-	// Example mock data (ensure correct structure)
+	// Mock data
 	$mock_courses = [
-		['course_id' => '101', 'title' => 'Introduction to Programming', 'college' => 'ENG', 'department' => 'CS'],
-		['course_id' => '102', 'title' => 'Advanced Algorithms', 'college' => 'ENG', 'department' => 'CS'],
-		['course_id' => '201', 'title' => 'Linear Algebra', 'college' => 'SCI', 'department' => 'MATH'],
-		['course_id' => '202', 'title' => 'Calculus I', 'college' => 'SCI', 'department' => 'MATH'],
-		['course_id' => '203', 'title' => 'Calculus II', 'college' => 'SCI', 'department' => 'MATH'],
-		['course_id' => '301', 'title' => 'Physics I', 'college' => 'SCI', 'department' => 'PHYS'],
-		['course_id' => '302', 'title' => 'Physics II', 'college' => 'SCI', 'department' => 'PHYS'],
-		['course_id' => '401', 'title' => 'Introduction to Psychology', 'college' => 'ARTS', 'department' => 'PSY'],
-		['course_id' => '402', 'title' => 'Cognitive Psychology', 'college' => 'ARTS', 'department' => 'PSY'],
-		['course_id' => '501', 'title' => 'World History', 'college' => 'ARTS', 'department' => 'HIST'],
-		['course_id' => '502', 'title' => 'European History', 'college' => 'ARTS', 'department' => 'HIST'],
-		['course_id' => '601', 'title' => 'Marketing 101', 'college' => 'BUS', 'department' => 'MKT'],
-		['course_id' => '602', 'title' => 'Advanced Marketing', 'college' => 'BUS', 'department' => 'MKT'],
-		['course_id' => '701', 'title' => 'Financial Accounting', 'college' => 'BUS', 'department' => 'FIN'],
-		['course_id' => '702', 'title' => 'Corporate Finance', 'college' => 'BUS', 'department' => 'FIN'],
-		['course_id' => '801', 'title' => 'Environmental Science', 'college' => 'SCI', 'department' => 'ENVS'],
-		['course_id' => '802', 'title' => 'Climate Change Studies', 'college' => 'SCI', 'department' => 'ENVS'],
-		['course_id' => '901', 'title' => 'Artificial Intelligence', 'college' => 'ENG', 'department' => 'CS'],
-		['course_id' => '902', 'title' => 'Machine Learning', 'college' => 'ENG', 'department' => 'CS'],
-		['course_id' => '903', 'title' => 'Data Structures', 'college' => 'ENG', 'department' => 'CS'],
+		['course_id' => 'CS101', 'title' => 'Introduction to Programming', 'college' => 'ENG', 'department' => 'CS'],
+		['course_id' => 'CS102', 'title' => 'Advanced Algorithms', 'college' => 'ENG', 'department' => 'CS'],
+		['course_id' => 'EE201', 'title' => 'Circuit Analysis', 'college' => 'ENG', 'department' => 'EE'],
+		['course_id' => 'MATH201', 'title' => 'Linear Algebra', 'college' => 'SCI', 'department' => 'MATH'],
+		['course_id' => 'PHYS301', 'title' => 'Physics I', 'college' => 'SCI', 'department' => 'PHYS'],
+		['course_id' => 'PSY101', 'title' => 'Introduction to Psychology', 'college' => 'ARTS', 'department' => 'PSY'],
 	];
 
-	if (empty($courses)) {
-		return '<p>No courses found for the specified filters.</p>';
-	}
+	// Default to empty strings if filters are not set
+	$college = $filters['college'] ?? '';
+	$department = $filters['department'] ?? '';
 
-	// Simulate filtering based on $request parameters
-	$filtered_courses = array_filter($mock_courses, function ($course) use ($request) {
-		$college = $request['college'] ?? '';
-		$department = $request['department'] ?? '';
+	// Filter courses
+	return array_filter($mock_courses, function ($course) use ($college, $department) {
 		return (!$college || $course['college'] === $college) &&
 			(!$department || $course['department'] === $department);
 	});
-
-	return array_values($filtered_courses); // Ensure re-indexed array
 }
+
 
 // Custom function to fetch courses
 
@@ -72,33 +55,40 @@ function bu_course_feeds_get_courses($request)
 // Render callback for the Gutenberg block
 function bu_course_feeds_render_block($attributes)
 {
-	$college = isset($attributes['college']) ? sanitize_text_field($attributes['college']) : '';
-	$department = isset($attributes['department']) ? sanitize_text_field($attributes['department']) : '';
+	// Ensure keys exist
+	$college = !empty($attributes['college']) ? sanitize_text_field($attributes['college']) : '';
+	$department = !empty($attributes['department']) ? sanitize_text_field($attributes['department']) : '';
 
-	// Fetch courses
+	// Mock or real data fetching
 	$courses = bu_course_feeds_get_courses(['college' => $college, 'department' => $department]);
 
-	if (is_wp_error($courses)) {
-		return '<p>Error: ' . esc_html($courses->get_error_message()) . '</p>';
+	// Ensure $courses is an array
+	if (!is_array($courses)) {
+		$courses = [];
 	}
 
-	// Debugging output
 	ob_start();
 ?>
 	<div class="bu-course-feeds">
 		<h3>Course Feeds</h3>
 		<ul>
-			<?php foreach ($courses as $course): ?>
-				<li>
-					<?php echo esc_html($course['title'] ?? 'No Title'); ?>
-					(<?php echo esc_html($course['course_id'] ?? 'No ID'); ?>)
-				</li>
-			<?php endforeach; ?>
+			<?php
+			if (!empty($courses)) {
+				foreach ($courses as $course) {
+					echo '<li>' . esc_html($course['title'] ?? 'No Title') . ' (' . esc_html($course['course_id'] ?? 'No ID') . ')</li>';
+				}
+			} else {
+				echo '<p>No courses found for the specified filters.</p>';
+			}
+			?>
 		</ul>
 	</div>
 <?php
 	return ob_get_clean();
 }
+
+
+
 
 
 // Register the Gutenberg block
