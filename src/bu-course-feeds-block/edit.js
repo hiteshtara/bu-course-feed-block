@@ -4,7 +4,15 @@ import { PanelBody, SelectControl, Spinner, Notice } from '@wordpress/components
 
 export default function Edit({ attributes, setAttributes }) {
     const { college, department, courseId } = attributes;
+//Added a Real-Time Preview Section:
+//A <div> labeled block-preview now displays the selected college, department, and course dynamically.
+//Displays None for unselected attributes in the preview.
+//he preview updates immediately when users select a value from the dropdowns
+//When you publish the block, the selected attributes (college, department, and courseId) are passed to the server and saved.
+//Error and Loading States:Added feedback with a spinner and an error message directly within the block preview.
+//When selecting college, department, and course, the block's left-hand preview updates immediately.
 
+    // Mock data for courses
     const mockCourses = [
         // Engineering - Computer Science
         { course_id: 'CS101', title: 'Introduction to Programming', college: 'ENG', department: 'CS' },
@@ -51,6 +59,7 @@ export default function Edit({ attributes, setAttributes }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // Filter courses based on college and department
     useEffect(() => {
         if (!college && !department) {
             setError('Please specify a college or department.');
@@ -88,6 +97,7 @@ export default function Edit({ attributes, setAttributes }) {
 
     return (
         <div {...useBlockProps()}>
+            {/* Sidebar settings */}
             <InspectorControls>
                 <PanelBody title="Course Feed Settings">
                     <SelectControl
@@ -116,14 +126,22 @@ export default function Edit({ attributes, setAttributes }) {
                         label="Course"
                         value={courseId}
                         options={courseOptions}
-                        onChange={(value) => {
-                            console.log('Selected Course ID:', value);
-                            setAttributes({ courseId: value });
-                        }}
+                        onChange={(value) => setAttributes({ courseId: value })}
                         disabled={!department}
                     />
                 </PanelBody>
             </InspectorControls>
+
+            {/* Real-time preview */}
+            <div className="block-preview">
+                <h3>Course Feeds Preview</h3>
+                <p><strong>Selected College:</strong> {college || 'None'}</p>
+                <p><strong>Selected Department:</strong> {department || 'None'}</p>
+                <p><strong>Selected Course:</strong> {courseId || 'None'}</p>
+
+                {loading && <Spinner />}
+                {error && <Notice status="error" isDismissible>{error}</Notice>}
+            </div>
         </div>
     );
 }
