@@ -12,10 +12,10 @@
       "type": "string",
       "default": ""
     },
-	"course": {
-            "type": "string",
-            "default": ""
-        },
+	"courseId": {
+        "type": "string",
+        "default": ""
+    },
     "department": {
       "type": "string",
       "default": ""

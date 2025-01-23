@@ -1,37 +1,66 @@
 import { useState, useEffect } from '@wordpress/element';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, Spinner, Notice } from '@wordpress/components';
+import { PanelBody, SelectControl, Spinner, Notice } from '@wordpress/components';
 
 export default function Edit({ attributes, setAttributes }) {
-    const { college, department } = attributes;
+    const { college, department, courseId } = attributes;
 
-    // Mock courses data
     const mockCourses = [
+        // Engineering - Computer Science
         { course_id: 'CS101', title: 'Introduction to Programming', college: 'ENG', department: 'CS' },
-        { course_id: 'CS102', title: 'Advanced Algorithms', college: 'ENG', department: 'CS' },
-        { course_id: 'EE201', title: 'Circuit Analysis', college: 'ENG', department: 'EE' },
+        { course_id: 'CS102', title: 'Data Structures', college: 'ENG', department: 'CS' },
+        { course_id: 'CS201', title: 'Algorithms', college: 'ENG', department: 'CS' },
+        { course_id: 'CS301', title: 'Operating Systems', college: 'ENG', department: 'CS' },
+    
+        // Engineering - Electrical Engineering
+        { course_id: 'EE101', title: 'Circuit Analysis I', college: 'ENG', department: 'EE' },
+        { course_id: 'EE201', title: 'Digital Systems Design', college: 'ENG', department: 'EE' },
+        { course_id: 'EE301', title: 'Signal Processing', college: 'ENG', department: 'EE' },
+    
+        // Science - Mathematics
+        { course_id: 'MATH101', title: 'Calculus I', college: 'SCI', department: 'MATH' },
+        { course_id: 'MATH102', title: 'Calculus II', college: 'SCI', department: 'MATH' },
         { course_id: 'MATH201', title: 'Linear Algebra', college: 'SCI', department: 'MATH' },
-        { course_id: 'PHYS301', title: 'Physics I', college: 'SCI', department: 'PHYS' },
+        { course_id: 'MATH301', title: 'Differential Equations', college: 'SCI', department: 'MATH' },
+    
+        // Science - Physics
+        { course_id: 'PHYS101', title: 'General Physics I', college: 'SCI', department: 'PHYS' },
+        { course_id: 'PHYS102', title: 'General Physics II', college: 'SCI', department: 'PHYS' },
+        { course_id: 'PHYS201', title: 'Thermodynamics', college: 'SCI', department: 'PHYS' },
+        { course_id: 'PHYS301', title: 'Quantum Mechanics', college: 'SCI', department: 'PHYS' },
+    
+        // Arts - Psychology
         { course_id: 'PSY101', title: 'Introduction to Psychology', college: 'ARTS', department: 'PSY' },
-        { course_id: 'HIST501', title: 'World History', college: 'ARTS', department: 'HIST' },
+        { course_id: 'PSY201', title: 'Developmental Psychology', college: 'ARTS', department: 'PSY' },
+        { course_id: 'PSY301', title: 'Cognitive Psychology', college: 'ARTS', department: 'PSY' },
+    
+        // Arts - History
+        { course_id: 'HIST101', title: 'World History I', college: 'ARTS', department: 'HIST' },
+        { course_id: 'HIST102', title: 'World History II', college: 'ARTS', department: 'HIST' },
+        { course_id: 'HIST201', title: 'European History', college: 'ARTS', department: 'HIST' },
+        { course_id: 'HIST301', title: 'Modern American History', college: 'ARTS', department: 'HIST' },
+    
+        // Arts - Fine Arts
+        { course_id: 'FINE101', title: 'Drawing Basics', college: 'ARTS', department: 'FINE' },
+        { course_id: 'FINE201', title: 'Painting Techniques', college: 'ARTS', department: 'FINE' },
+        { course_id: 'FINE301', title: 'Sculpture', college: 'ARTS', department: 'FINE' },
     ];
+    
 
-    const [courses, setCourses] = useState([]);
+    const [courseOptions, setCourseOptions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Fetch courses based on selected college and department
     useEffect(() => {
         if (!college && !department) {
             setError('Please specify a college or department.');
-            setCourses([]);
+            setCourseOptions([]);
             return;
         }
 
         setLoading(true);
         setError(null);
 
-        // Simulate an API call with a delay using mock data
         setTimeout(() => {
             const filteredCourses = mockCourses.filter((course) => {
                 const matchesCollege = college ? course.college === college : true;
@@ -40,50 +69,61 @@ export default function Edit({ attributes, setAttributes }) {
             });
 
             if (filteredCourses.length > 0) {
-                setCourses(filteredCourses);
+                setCourseOptions([
+                    { label: 'Select a Course', value: '' },
+                    ...filteredCourses.map((course) => ({
+                        label: `${course.title} (${course.course_id})`,
+                        value: course.course_id,
+                    })),
+                ]);
                 setError(null);
             } else {
-                setCourses([]);
+                setCourseOptions([{ label: 'No courses found', value: '' }]);
                 setError('No courses found for the specified filters.');
             }
 
             setLoading(false);
-        }, 500); // Simulating network delay
+        }, 500);
     }, [college, department]);
 
     return (
         <div {...useBlockProps()}>
-            {/* Block settings in the sidebar */}
             <InspectorControls>
                 <PanelBody title="Course Feed Settings">
-                    {/* College input */}
-                    <TextControl
+                    <SelectControl
                         label="College"
-                        value={college || ''}
+                        value={college}
+                        options={[
+                            { label: 'Select a College', value: '' },
+                            { label: 'Engineering (ENG)', value: 'ENG' },
+                            { label: 'Science (SCI)', value: 'SCI' },
+                        ]}
                         onChange={(value) => setAttributes({ college: value })}
-                        placeholder="Enter college code (e.g., ENG)"
                     />
-                    {/* Department input */}
-                    <TextControl
+                    <SelectControl
                         label="Department"
-                        value={department || ''}
+                        value={department}
+                        options={[
+                            { label: 'Select a Department', value: '' },
+                            { label: 'Computer Science (CS)', value: 'CS' },
+                            { label: 'Electrical Engineering (EE)', value: 'EE' },
+                            { label: 'Mathematics (MATH)', value: 'MATH' },
+                        ]}
                         onChange={(value) => setAttributes({ department: value })}
-                        placeholder="Enter department code (e.g., CS)"
+                        disabled={!college}
+                    />
+                    <SelectControl
+                        label="Course"
+                        value={courseId}
+                        options={courseOptions}
+                        onChange={(value) => {
+                            console.log('Selected Course ID:', value);
+                            setAttributes({ courseId: value });
+                        }}
+                        disabled={!department}
                     />
                 </PanelBody>
             </InspectorControls>
-
-            {/* Block content */}
-            <h3>BU Course Feeds</h3>
-            {loading && <Spinner />}
-            {error && <Notice status="error" isDismissible>{error}</Notice>}
-            <ul>
-                {courses.map((course) => (
-                    <li key={course.course_id}>
-                        {course.title} ({course.course_id})
-                    </li>
-                ))}
-            </ul>
         </div>
     );
 }

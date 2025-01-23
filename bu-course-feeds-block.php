@@ -55,37 +55,22 @@ function bu_course_feeds_get_courses($filters)
 // Render callback for the Gutenberg block
 function bu_course_feeds_render_block($attributes)
 {
-	// Ensure keys exist
-	$college = !empty($attributes['college']) ? sanitize_text_field($attributes['college']) : '';
-	$department = !empty($attributes['department']) ? sanitize_text_field($attributes['department']) : '';
-
-	// Mock or real data fetching
-	$courses = bu_course_feeds_get_courses(['college' => $college, 'department' => $department]);
-
-	// Ensure $courses is an array
-	if (!is_array($courses)) {
-		$courses = [];
-	}
+	$college = isset($attributes['college']) ? sanitize_text_field($attributes['college']) : '';
+	$department = isset($attributes['department']) ? sanitize_text_field($attributes['department']) : '';
+	$courseId = isset($attributes['courseId']) ? sanitize_text_field($attributes['courseId']) : '';
 
 	ob_start();
 ?>
 	<div class="bu-course-feeds">
 		<h3>Course Feeds</h3>
-		<ul>
-			<?php
-			if (!empty($courses)) {
-				foreach ($courses as $course) {
-					echo '<li>' . esc_html($course['title'] ?? 'No Title') . ' (' . esc_html($course['course_id'] ?? 'No ID') . ')</li>';
-				}
-			} else {
-				echo '<p>No courses found for the specified filters.</p>';
-			}
-			?>
-		</ul>
+		<p><strong>College:</strong> <?php echo esc_html($college ?: 'None'); ?></p>
+		<p><strong>Department:</strong> <?php echo esc_html($department ?: 'None'); ?></p>
+		<p><strong>Selected Course:</strong> <?php echo esc_html($courseId ?: 'None'); ?></p>
 	</div>
 <?php
 	return ob_get_clean();
 }
+
 
 
 

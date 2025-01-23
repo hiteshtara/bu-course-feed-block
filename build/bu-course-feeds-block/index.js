@@ -30,61 +30,160 @@ function Edit({
 }) {
   const {
     college,
-    department
+    department,
+    courseId
   } = attributes;
-
-  // Mock courses data
-  const mockCourses = [{
+  const mockCourses = [
+  // Engineering - Computer Science
+  {
     course_id: 'CS101',
     title: 'Introduction to Programming',
     college: 'ENG',
     department: 'CS'
   }, {
     course_id: 'CS102',
-    title: 'Advanced Algorithms',
+    title: 'Data Structures',
     college: 'ENG',
     department: 'CS'
   }, {
-    course_id: 'EE201',
-    title: 'Circuit Analysis',
+    course_id: 'CS201',
+    title: 'Algorithms',
+    college: 'ENG',
+    department: 'CS'
+  }, {
+    course_id: 'CS301',
+    title: 'Operating Systems',
+    college: 'ENG',
+    department: 'CS'
+  },
+  // Engineering - Electrical Engineering
+  {
+    course_id: 'EE101',
+    title: 'Circuit Analysis I',
     college: 'ENG',
     department: 'EE'
+  }, {
+    course_id: 'EE201',
+    title: 'Digital Systems Design',
+    college: 'ENG',
+    department: 'EE'
+  }, {
+    course_id: 'EE301',
+    title: 'Signal Processing',
+    college: 'ENG',
+    department: 'EE'
+  },
+  // Science - Mathematics
+  {
+    course_id: 'MATH101',
+    title: 'Calculus I',
+    college: 'SCI',
+    department: 'MATH'
+  }, {
+    course_id: 'MATH102',
+    title: 'Calculus II',
+    college: 'SCI',
+    department: 'MATH'
   }, {
     course_id: 'MATH201',
     title: 'Linear Algebra',
     college: 'SCI',
     department: 'MATH'
   }, {
-    course_id: 'PHYS301',
-    title: 'Physics I',
+    course_id: 'MATH301',
+    title: 'Differential Equations',
+    college: 'SCI',
+    department: 'MATH'
+  },
+  // Science - Physics
+  {
+    course_id: 'PHYS101',
+    title: 'General Physics I',
     college: 'SCI',
     department: 'PHYS'
   }, {
+    course_id: 'PHYS102',
+    title: 'General Physics II',
+    college: 'SCI',
+    department: 'PHYS'
+  }, {
+    course_id: 'PHYS201',
+    title: 'Thermodynamics',
+    college: 'SCI',
+    department: 'PHYS'
+  }, {
+    course_id: 'PHYS301',
+    title: 'Quantum Mechanics',
+    college: 'SCI',
+    department: 'PHYS'
+  },
+  // Arts - Psychology
+  {
     course_id: 'PSY101',
     title: 'Introduction to Psychology',
     college: 'ARTS',
     department: 'PSY'
   }, {
-    course_id: 'HIST501',
-    title: 'World History',
+    course_id: 'PSY201',
+    title: 'Developmental Psychology',
+    college: 'ARTS',
+    department: 'PSY'
+  }, {
+    course_id: 'PSY301',
+    title: 'Cognitive Psychology',
+    college: 'ARTS',
+    department: 'PSY'
+  },
+  // Arts - History
+  {
+    course_id: 'HIST101',
+    title: 'World History I',
     college: 'ARTS',
     department: 'HIST'
+  }, {
+    course_id: 'HIST102',
+    title: 'World History II',
+    college: 'ARTS',
+    department: 'HIST'
+  }, {
+    course_id: 'HIST201',
+    title: 'European History',
+    college: 'ARTS',
+    department: 'HIST'
+  }, {
+    course_id: 'HIST301',
+    title: 'Modern American History',
+    college: 'ARTS',
+    department: 'HIST'
+  },
+  // Arts - Fine Arts
+  {
+    course_id: 'FINE101',
+    title: 'Drawing Basics',
+    college: 'ARTS',
+    department: 'FINE'
+  }, {
+    course_id: 'FINE201',
+    title: 'Painting Techniques',
+    college: 'ARTS',
+    department: 'FINE'
+  }, {
+    course_id: 'FINE301',
+    title: 'Sculpture',
+    college: 'ARTS',
+    department: 'FINE'
   }];
-  const [courses, setCourses] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [courseOptions, setCourseOptions] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [loading, setLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
-
-  // Fetch courses based on selected college and department
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (!college && !department) {
       setError('Please specify a college or department.');
-      setCourses([]);
+      setCourseOptions([]);
       return;
     }
     setLoading(true);
     setError(null);
-
-    // Simulate an API call with a delay using mock data
     setTimeout(() => {
       const filteredCourses = mockCourses.filter(course => {
         const matchesCollege = college ? course.college === college : true;
@@ -92,47 +191,79 @@ function Edit({
         return matchesCollege && matchesDepartment;
       });
       if (filteredCourses.length > 0) {
-        setCourses(filteredCourses);
+        setCourseOptions([{
+          label: 'Select a Course',
+          value: ''
+        }, ...filteredCourses.map(course => ({
+          label: `${course.title} (${course.course_id})`,
+          value: course.course_id
+        }))]);
         setError(null);
       } else {
-        setCourses([]);
+        setCourseOptions([{
+          label: 'No courses found',
+          value: ''
+        }]);
         setError('No courses found for the specified filters.');
       }
       setLoading(false);
-    }, 500); // Simulating network delay
+    }, 500);
   }, [college, department]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
     ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(),
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
         title: "Course Feed Settings",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
           label: "College",
-          value: college || '',
+          value: college,
+          options: [{
+            label: 'Select a College',
+            value: ''
+          }, {
+            label: 'Engineering (ENG)',
+            value: 'ENG'
+          }, {
+            label: 'Science (SCI)',
+            value: 'SCI'
+          }],
           onChange: value => setAttributes({
             college: value
-          }),
-          placeholder: "Enter college code (e.g., ENG)"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
           label: "Department",
-          value: department || '',
+          value: department,
+          options: [{
+            label: 'Select a Department',
+            value: ''
+          }, {
+            label: 'Computer Science (CS)',
+            value: 'CS'
+          }, {
+            label: 'Electrical Engineering (EE)',
+            value: 'EE'
+          }, {
+            label: 'Mathematics (MATH)',
+            value: 'MATH'
+          }],
           onChange: value => setAttributes({
             department: value
           }),
-          placeholder: "Enter department code (e.g., CS)"
+          disabled: !college
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
+          label: "Course",
+          value: courseId,
+          options: courseOptions,
+          onChange: value => {
+            console.log('Selected Course ID:', value);
+            setAttributes({
+              courseId: value
+            });
+          },
+          disabled: !department
         })]
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("h3", {
-      children: "BU Course Feeds"
-    }), loading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Spinner, {}), error && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Notice, {
-      status: "error",
-      isDismissible: true,
-      children: error
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("ul", {
-      children: courses.map(course => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("li", {
-        children: [course.title, " (", course.course_id, ")"]
-      }, course.course_id))
-    })]
+    })
   });
 }
 

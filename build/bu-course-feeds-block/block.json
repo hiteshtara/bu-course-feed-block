@@ -12,7 +12,7 @@
       "type": "string",
       "default": ""
     },
-    "course": {
+    "courseId": {
       "type": "string",
       "default": ""
     },
