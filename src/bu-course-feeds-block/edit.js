@@ -4,7 +4,9 @@ import { PanelBody, SelectControl, Spinner, Notice } from '@wordpress/components
 
 export default function Edit({ attributes, setAttributes }) {
     const { college, department, courseId } = attributes;
-//Added a Real-Time Preview Section:
+//Added a Real-Time Preview Section:Simulates data for the block editor interface.Block editor in the WordPress admin panel.
+// Filters data for dropdowns and live previews.Works with attributes passed to setAttributes.
+// It simulates the behavior of fetching and displaying course data as if it were coming from an API.Real-time updates and dropdown options.
 //A <div> labeled block-preview now displays the selected college, department, and course dynamically.
 //Displays None for unselected attributes in the preview.
 //he preview updates immediately when users select a value from the dropdowns
@@ -12,7 +14,17 @@ export default function Edit({ attributes, setAttributes }) {
 //Error and Loading States:Added feedback with a spinner and an error message directly within the block preview.
 //When selecting college, department, and course, the block's left-hand preview updates immediately.
 
-    // Mock data for courses
+    // Mock data for coursesT he mock data (mockCourses) is a static array of objects representing courses.
+    //When the user selects a college or department, the useEffect hook filters the mock data to match the selected values.
+    //The filtered results are used to populate the course dropdown dynamically.
+    //When the user selects a course, its course_id is saved to the block's attributes via setAttributes.
+    //Initial State:The dropdowns are empty, showing placeholder options (e.g., "Select a College").No mock courses are displayed.
+    //After Selecting a College:The useEffect hook filters mockCourses to match the selected college.he dropdown for department is populated.
+    //After Selecting a Department:he useEffect hook further filters mockCourses to match both the selected college and department.
+    //he course dropdown is populated with matching courses.After Selecting a Course:The selected course's course_id is stored in the block's attributes and displayed in the real-time preview.
+    //The mock data in edit.js is essential for testing and simulating dynamic dropdowns and real-time previews in the block editor. 
+    // It works hand-in-hand with setAttributes and the useEffect hook to create a smooth user experience while developing the block.
+
     const mockCourses = [
         // Engineering - Computer Science
         { course_id: 'CS101', title: 'Introduction to Programming', college: 'ENG', department: 'CS' },
