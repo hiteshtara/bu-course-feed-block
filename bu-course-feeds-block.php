@@ -35,6 +35,7 @@ function bu_course_feeds_load_mock_data()
 //reads the content of mock-data.php and returns the array it contains to the API response.
 //WordPress converts the PHP array to JSON and serves it via the REST API.
 //Your block's edit.js fetches the data from the REST API and dynamically updates the block editor interface.
+//the url http://course-feed.local/wp-json/bu-course-feeds/v1/courses
 add_action('rest_api_init', function () {
 	register_rest_route('bu-course-feeds/v1', '/courses', [
 		'methods'             => 'GET',
