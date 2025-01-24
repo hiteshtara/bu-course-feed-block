@@ -33,205 +33,56 @@ function Edit({
     department,
     courseId
   } = attributes;
-  //Added a Real-Time Preview Section:Simulates data for the block editor interface.Block editor in the WordPress admin panel.
-  // Filters data for dropdowns and live previews.Works with attributes passed to setAttributes.
-  // It simulates the behavior of fetching and displaying course data as if it were coming from an API.Real-time updates and dropdown options.
-  //A <div> labeled block-preview now displays the selected college, department, and course dynamically.
-  //Displays None for unselected attributes in the preview.
-  //he preview updates immediately when users select a value from the dropdowns
-  //When you publish the block, the selected attributes (college, department, and courseId) are passed to the server and saved.
-  //Error and Loading States:Added feedback with a spinner and an error message directly within the block preview.
-  //When selecting college, department, and course, the block's left-hand preview updates immediately.
-
-  // Mock data for coursesT he mock data (mockCourses) is a static array of objects representing courses.
-  //When the user selects a college or department, the useEffect hook filters the mock data to match the selected values.
-  //The filtered results are used to populate the course dropdown dynamically.
-  //When the user selects a course, its course_id is saved to the block's attributes via setAttributes.
-  //Initial State:The dropdowns are empty, showing placeholder options (e.g., "Select a College").No mock courses are displayed.
-  //After Selecting a College:The useEffect hook filters mockCourses to match the selected college.he dropdown for department is populated.
-  //After Selecting a Department:he useEffect hook further filters mockCourses to match both the selected college and department.
-  //he course dropdown is populated with matching courses.After Selecting a Course:The selected course's course_id is stored in the block's attributes and displayed in the real-time preview.
-  //The mock data in edit.js is essential for testing and simulating dynamic dropdowns and real-time previews in the block editor. 
-  // It works hand-in-hand with setAttributes and the useEffect hook to create a smooth user experience while developing the block.
-
-  const mockCourses = [
-  // Engineering - Computer Science
-  {
-    course_id: 'CS101',
-    title: 'Introduction to Programming',
-    college: 'ENG',
-    department: 'CS'
-  }, {
-    course_id: 'CS102',
-    title: 'Data Structures',
-    college: 'ENG',
-    department: 'CS'
-  }, {
-    course_id: 'CS201',
-    title: 'Algorithms',
-    college: 'ENG',
-    department: 'CS'
-  }, {
-    course_id: 'CS301',
-    title: 'Operating Systems',
-    college: 'ENG',
-    department: 'CS'
-  },
-  // Engineering - Electrical Engineering
-  {
-    course_id: 'EE101',
-    title: 'Circuit Analysis I',
-    college: 'ENG',
-    department: 'EE'
-  }, {
-    course_id: 'EE201',
-    title: 'Digital Systems Design',
-    college: 'ENG',
-    department: 'EE'
-  }, {
-    course_id: 'EE301',
-    title: 'Signal Processing',
-    college: 'ENG',
-    department: 'EE'
-  },
-  // Science - Mathematics
-  {
-    course_id: 'MATH101',
-    title: 'Calculus I',
-    college: 'SCI',
-    department: 'MATH'
-  }, {
-    course_id: 'MATH102',
-    title: 'Calculus II',
-    college: 'SCI',
-    department: 'MATH'
-  }, {
-    course_id: 'MATH201',
-    title: 'Linear Algebra',
-    college: 'SCI',
-    department: 'MATH'
-  }, {
-    course_id: 'MATH301',
-    title: 'Differential Equations',
-    college: 'SCI',
-    department: 'MATH'
-  },
-  // Science - Physics
-  {
-    course_id: 'PHYS101',
-    title: 'General Physics I',
-    college: 'SCI',
-    department: 'PHYS'
-  }, {
-    course_id: 'PHYS102',
-    title: 'General Physics II',
-    college: 'SCI',
-    department: 'PHYS'
-  }, {
-    course_id: 'PHYS201',
-    title: 'Thermodynamics',
-    college: 'SCI',
-    department: 'PHYS'
-  }, {
-    course_id: 'PHYS301',
-    title: 'Quantum Mechanics',
-    college: 'SCI',
-    department: 'PHYS'
-  },
-  // Arts - Psychology
-  {
-    course_id: 'PSY101',
-    title: 'Introduction to Psychology',
-    college: 'ARTS',
-    department: 'PSY'
-  }, {
-    course_id: 'PSY201',
-    title: 'Developmental Psychology',
-    college: 'ARTS',
-    department: 'PSY'
-  }, {
-    course_id: 'PSY301',
-    title: 'Cognitive Psychology',
-    college: 'ARTS',
-    department: 'PSY'
-  },
-  // Arts - History
-  {
-    course_id: 'HIST101',
-    title: 'World History I',
-    college: 'ARTS',
-    department: 'HIST'
-  }, {
-    course_id: 'HIST102',
-    title: 'World History II',
-    college: 'ARTS',
-    department: 'HIST'
-  }, {
-    course_id: 'HIST201',
-    title: 'European History',
-    college: 'ARTS',
-    department: 'HIST'
-  }, {
-    course_id: 'HIST301',
-    title: 'Modern American History',
-    college: 'ARTS',
-    department: 'HIST'
-  },
-  // Arts - Fine Arts
-  {
-    course_id: 'FINE101',
-    title: 'Drawing Basics',
-    college: 'ARTS',
-    department: 'FINE'
-  }, {
-    course_id: 'FINE201',
-    title: 'Painting Techniques',
-    college: 'ARTS',
-    department: 'FINE'
-  }, {
-    course_id: 'FINE301',
-    title: 'Sculpture',
-    college: 'ARTS',
-    department: 'FINE'
-  }];
+  const [courses, setCourses] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [courseOptions, setCourseOptions] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
-  const [loading, setLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [loading, setLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
   const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
 
-  // Filter courses based on college and department
+  // Fetch courses from the REST API
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    if (!college && !department) {
-      setError('Please specify a college or department.');
-      setCourseOptions([]);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    setTimeout(() => {
-      const filteredCourses = mockCourses.filter(course => {
-        const matchesCollege = college ? course.college === college : true;
-        const matchesDepartment = department ? course.department === department : true;
-        return matchesCollege && matchesDepartment;
-      });
-      if (filteredCourses.length > 0) {
-        setCourseOptions([{
-          label: 'Select a Course',
-          value: ''
-        }, ...filteredCourses.map(course => ({
-          label: `${course.title} (${course.course_id})`,
-          value: course.course_id
-        }))]);
-        setError(null);
-      } else {
-        setCourseOptions([{
-          label: 'No courses found',
-          value: ''
-        }]);
-        setError('No courses found for the specified filters.');
+    async function fetchCourses() {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('/wp-json/bu-course-feeds/v1/courses');
+        if (!response.ok) {
+          throw new Error('Failed to fetch courses');
+        }
+        const data = await response.json();
+        setCourses(data);
+      } catch (err) {
+        setError(err.message);
+        setCourses([]);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    }, 500);
-  }, [college, department]);
+    }
+    fetchCourses();
+  }, []);
+
+  // Filter courses based on selected college and department
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (loading || error) return;
+    const filteredCourses = courses.filter(course => {
+      const matchesCollege = college ? course.college === college : true;
+      const matchesDepartment = department ? course.department === department : true;
+      return matchesCollege && matchesDepartment;
+    });
+    if (filteredCourses.length > 0) {
+      setCourseOptions([{
+        label: 'Select a Course',
+        value: ''
+      }, ...filteredCourses.map(course => ({
+        label: `${course.title} (${course.course_id})`,
+        value: course.course_id
+      }))]);
+    } else {
+      setCourseOptions([{
+        label: 'No courses found',
+        value: ''
+      }]);
+    }
+  }, [college, department, courses, loading, error]);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
     ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(),
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
@@ -249,6 +100,9 @@ function Edit({
           }, {
             label: 'Science (SCI)',
             value: 'SCI'
+          }, {
+            label: 'Arts (ARTS)',
+            value: 'ARTS'
           }],
           onChange: value => setAttributes({
             college: value
@@ -259,16 +113,10 @@ function Edit({
           options: [{
             label: 'Select a Department',
             value: ''
-          }, {
-            label: 'Computer Science (CS)',
-            value: 'CS'
-          }, {
-            label: 'Electrical Engineering (EE)',
-            value: 'EE'
-          }, {
-            label: 'Mathematics (MATH)',
-            value: 'MATH'
-          }],
+          }, ...Array.from(new Set(courses.filter(course => college ? course.college === college : true).map(course => course.department))).map(dept => ({
+            label: dept,
+            value: dept
+          }))],
           onChange: value => setAttributes({
             department: value
           }),
