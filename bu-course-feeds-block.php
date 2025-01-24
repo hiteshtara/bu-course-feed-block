@@ -26,14 +26,29 @@ function bu_course_feeds_load_mock_data()
 	return [];
 }
 
-// Register the REST API route
+// Register the REST API route /wp-json/bu-course-feeds/v1/courses REST API endpoint in WordPress 
+//is configured to map directly to mock-data.php (or course-dat.php) using the register_rest_route() function in your PHP code.
+//When you register a REST API route with register_rest_route(), you define:A namespace (e.g., bu-course-feeds/v1).A specific route (e.g., /courses).
+//A callback function to handle requests to this route.
+//Path to the Data File: The plugin uses plugin_dir_path(__FILE__) to determine the directory of the current PHP 
+//file and appends mock-data.php (or course-dat.php) to get the full file path.Including the File: The include statement 
+//reads the content of mock-data.php and returns the array it contains to the API response.
+//WordPress converts the PHP array to JSON and serves it via the REST API.
+//Your block's edit.js fetches the data from the REST API and dynamically updates the block editor interface.
 add_action('rest_api_init', function () {
 	register_rest_route('bu-course-feeds/v1', '/courses', [
 		'methods'             => 'GET',
-		'callback'            => 'bu_course_feeds_get_courses',
-		'permission_callback' => '__return_true', // Allow public access
+		'callback'            => function () {
+			$data_path = plugin_dir_path(__FILE__) . 'mock-data.php';
+			if (file_exists($data_path)) {
+				return include $data_path;
+			}
+			return new WP_Error('no_data', 'No mock data found', ['status' => 404]);
+		},
+		'permission_callback' => '__return_true',
 	]);
 });
+
 
 /**
  * Fetch course data based on filters (college and department).
